@@ -129,18 +129,44 @@ class DjangoSession(models.Model):
 
 class RedirectPage(models.Model):
     id = models.IntegerField(primary_key=True)  # AutoField?
-    all = models.CharField(max_length=200, blank=True)
-    android = models.CharField(max_length=200, blank=True)
-    ios = models.CharField(max_length=200, blank=True)
-    other = models.CharField(max_length=200, blank=True)
     uri = models.CharField(max_length=255)
     card_img_file = models.CharField(max_length=100, blank=True)
     card_title = models.CharField(max_length=140, blank=True)
     card_img_url = models.CharField(max_length=200, blank=True)
+    card_description = models.CharField(max_length=500, blank=True)
+    card_type = models.IntegerField(blank=True, null=True)
 
     def __unicode__(self):
-        return self.all
+        return self.card_title or self.uri
 
     class Meta:
         managed = False
         db_table = 'redirect_page'
+
+
+class RedirectPagealias(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    uri = models.CharField(max_length=255)
+    page = models.ForeignKey(RedirectPage)
+
+    def __unicode__(self):
+        return self.uri
+
+    class Meta:
+        managed = False
+        db_table = 'redirect_pagealias'
+
+
+class RedirectRedirection(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    url = models.CharField(max_length=200, blank=True)
+    platform = models.IntegerField(blank=True, null=True)
+    language = models.CharField(max_length=2, blank=True)
+    page = models.ForeignKey(RedirectPage)
+
+    def __unicode__(self):
+        return unicode(self.url) or u''
+
+    class Meta:
+        managed = False
+        db_table = 'redirect_redirection'

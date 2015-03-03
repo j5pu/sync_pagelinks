@@ -24,7 +24,7 @@ def insert_pagelink_id_in_default_db(post_data, new_pagelink):
     pagelink_post_to_change.save()
 
     new_pagelink_post = PagelinkPost.objects.using('default').filter(pagelink_id=pagelink_for_post.id,
-                                                                  post_id=post_data['post_id'])
+                                                                     post_id=post_data['post_id'])
     if new_pagelink_post.exists():
         logger_sync.info(
             'OK: Pagelink id por post "%s" in table pagelink_post in default db inserted succesfully' % post_data[
@@ -50,7 +50,8 @@ def create_short_link(post_data):
             'card_img_url': post_data['image'],
             'uri': uri,
             'card_title': post_data['title'],
-            # 'card_description': post_data['description'],
+            'card_description': post_data['description'],
+            'card_type': 2,
         },
     )
 
@@ -156,17 +157,40 @@ def sync_post(wp_post):
     logger_sync.info('---- Sync process for "%s" finished ----\n\n' % wp_post.post_title)
 
 
+def check_short_link_for_pagelink(pagelink_for_post, wp_post):
+    logger_sync.info('Checking shortlink for pagelink for post "%s"  in igoo_co db ...' % wp_post.post_title)
+    short_link_splitted = pagelink_for_post.page_link.split('/')
+
+    if RedirectPage.objects.using('igoo_co').filter(uri=short_link_splitted[-1]).exists():
+        logger_sync.info('Shortlink for pagelink for post "%s" in igoo_co db OK\n\n' % wp_post.post_title)
+        return True
+    else:
+        logger_sync.error('Shortlink for pagelink for post "%s"  in igoo_co db not exists' % wp_post.post_title)
+        try:
+            pagelink_for_post.page_link = create_short_link(fetch_post_data(wp_post))
+            pagelink_for_post.save()
+            check_short_link_for_pagelink(pagelink_for_post, wp_post)
+        except Exception as e:
+            logger_sync.error('%s' % e)
+            return False
+
+
 def check_pagelinkposts_for_post(post_in_default_db, wp_post):
     logger_sync.info('Checking pagelink_post for post "%s"  in default db ...' % wp_post.post_title)
 
     if post_in_default_db.pagelink_id:
-        try:
-            ProjectPagelink.objects.using('twitter_bots_prod').get(id=post_in_default_db.pagelink_id)
-            logger_sync.info('Pagelink_post exist for post "%s" in default db\n\n' % wp_post.post_title)
+        pagelink_for_post = ProjectPagelink.objects.using('twitter_bots_prod').filter(
+            id=post_in_default_db.pagelink_id)
 
-            return True
+        if pagelink_for_post.exists():
+            logger_sync.info('Pagelink_post exist for post "%s" in default db' % wp_post.post_title)
 
-        except ProjectPagelink.DoesNotExist:
+            if check_short_link_for_pagelink(pagelink_for_post[0], wp_post):
+                return True
+            else:
+
+                return False
+        else:
             logger_sync.info('Pagelink_post does not exist for post "%s" in default db' % wp_post.post_title)
 
             return False
@@ -198,7 +222,7 @@ def get_published_posts():
         wp_posts = WpPosts.objects.using('phasionate').all()
 
     if wp_posts.exists():
-        logger_sync.info('Posts obtained\n\n')
+        logger_sync.info('Posts obtained:\n\n')
         return wp_posts.filter(post_status='publish', post_type='post')
 
 
