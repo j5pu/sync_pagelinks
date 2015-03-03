@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" hash="1987101447">
+    <data-source source="LOCAL" name="Django default" uuid="dfe81d7a-eb10-4375-93fc-d420d24dc22f">
+      <driver-ref>mysql</driver-ref>
+      <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://127.0.0.1/sync_pagelinks</jdbc-url>
+      <user-name>root</user-name>
+      <libraries />
+    </data-source>
+    <data-source source="LOCAL" name="Django phasionate" uuid="750eaa06-580a-416a-a0f6-dfef6002b908">
+      <driver-ref>mysql</driver-ref>
+      <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://104.236.21.5/phasionate</jdbc-url>
+      <user-name>bizeulabswpuser</user-name>
+      <user-password>df9bdfcbdfd8dfcbdfcddfc5dfc4df9b</user-password>
+      <libraries />
+    </data-source>
+    <data-source source="LOCAL" name="Django twitter_bots" uuid="f136ac16-8c64-4678-88cd-f6d8a30f4cc6">
+      <driver-ref>mysql</driver-ref>
+      <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://88.26.212.82/twitter_bots_prod</jdbc-url>
+      <user-name>mnopi</user-name>
+      <user-password>df9bdfcbdfd8dfcbdfcddfc5dfc4df9b</user-password>
+      <libraries />
+    </data-source>
+    <data-source source="LOCAL" name="Django igoo.co" uuid="d85fd89c-2472-4a0d-8d45-bab7b0aab790">
+      <driver-ref>mysql</driver-ref>
+      <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://88.26.212.82/redirection</jdbc-url>
+      <user-name>mnopi</user-name>
+      <user-password>df9bdfcbdfd8dfcbdfcddfc5dfc4df9b</user-password>
+      <libraries />
+    </data-source>
+    <data-source source="LOCAL" name="Django twitter_bots_prod" uuid="0b32f52c-54cd-4f3b-a25b-e95d7dd9d7b8">
+      <driver-ref>mysql</driver-ref>
+      <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://192.168.1.115/twitter_bots_prod</jdbc-url>
+      <user-name>root</user-name>
+      <user-password>df9bdfcbdfd8dfcbdfcddfc5dfc4df9b</user-password>
+      <libraries />
+    </data-source>
+    <data-source source="LOCAL" name="Django igoo_co" uuid="a94cd77d-3239-4c09-a63f-7749fac1d330">
+      <driver-ref>mysql</driver-ref>
+      <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://igoo.co/redirection</jdbc-url>
+      <user-name>root</user-name>
+      <user-password>df9bdfcbdfd8dfcbdfcddfc5dfc4df9b</user-password>
+      <libraries />
+    </data-source>
+  </component>
+</project>
+

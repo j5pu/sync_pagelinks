@@ -10,6 +10,8 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import sys
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -37,6 +39,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
+    'phasionate',
+    'igoo_co',
+    'twitter_bots_prod',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -59,10 +64,38 @@ WSGI_APPLICATION = 'sync_pagelinks.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'sync_pagelinks',
+        "USER": "root",
+        "PASSWORD": "",
+        "HOST": "localhost",
+    },
+    'phasionate': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'phasionate',
+        "USER": "bizeulabswpuser",
+        "PASSWORD": "1aragon1",
+        "HOST": "104.236.21.5",
+    },
+    'igoo_co': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'redirection',
+        "USER": "root",
+        "PASSWORD": "1aragon1",
+        "HOST": "igoo.co",
+    },
+    'twitter_bots_prod': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'twitter_bots_prod',
+        "USER": "root",
+        "PASSWORD": "1aragon1",
+        "HOST": "192.168.1.115",
+    },
 }
+
+DATABASE_ROUTERS = ('phasionate.phasionate_router.PhasionateRouter',
+                    'igoo_co.igoo_co_router.IgooCoRouter',
+                    'twitter_bots_prod.twitter_bots_router.TwitterBotsRouter',)
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
@@ -82,3 +115,76 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            # 'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+            'format': "[%(asctime)s] [%(name)s:%(lineno)s] %(threadName)s - %(levelname)s  %(message)s",
+            'datefmt': "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+        # 'null': {
+        #     'level':'DEBUG',
+        #     'class':'django.utils.log.NullHandler',
+        # },
+        'console_info': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+            'stream': sys.stdout
+        },
+        'console_error': {
+            'level': 'ERROR',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+        'db_log_file':{
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/db_querys.log'),
+            'maxBytes': '16777216', # 16megabytes
+            'formatter': 'verbose'
+        },
+        # 'mail_admins': {
+        #     'level': 'ERROR',
+        #     'filters': ['require_debug_false'],
+        #     'class': 'django.utils.log.AdminEmailHandler',
+        #     'include_html': True,
+        # }
+    },
+    'loggers': {
+        # 'django.request': {
+        #     'handlers': ['mail_admins'],
+        #     'level': 'ERROR',
+        #     'propagate': True,
+        # },
+        'core.management.commands': { # I keep all my of apps under 'apps' folder, but you can also add them one by one, and this depends on how your virtualenv/paths are set
+            'handlers': ['console_info', 'console_error'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'django.db.backends': {
+            'handlers': ['db_log_file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+    # # you can also shortcut 'loggers' and just configure logging for EVERYTHING at once
+    # 'root': {
+    #     'handlers': ['console', 'mail_admins'],
+    #     'level': 'INFO'
+    # },
+}
